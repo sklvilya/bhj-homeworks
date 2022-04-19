@@ -4,9 +4,9 @@ class Game {
     this.wordElement = container.querySelector('.word');
     this.winsElement = container.querySelector('.status__wins');
     this.lossElement = container.querySelector('.status__loss');
+    this.countDown;
 
     this.reset();
-
     this.registerEvents();
   }
 
@@ -24,6 +24,15 @@ class Game {
       В случае правильного ввода слова вызываем this.success()
       При неправильном вводе символа - this.fail();
      */
+    let inputedSymbol;
+    let current = this;
+
+    function setEnteredSymbol(event) {
+      let symbol = current.currentSymbol.textContent.toUpperCase();
+      inputedSymbol = String.fromCharCode(event.keyCode);
+      symbol == inputedSymbol ? current.success() : current.fail();
+    }
+    document.addEventListener('keydown', setEnteredSymbol);
   }
 
   success() {
@@ -38,6 +47,7 @@ class Game {
       this.reset();
     }
     this.setNewWord();
+    clearInterval(this.countDown);
   }
 
   fail() {
@@ -46,12 +56,15 @@ class Game {
       this.reset();
     }
     this.setNewWord();
+    clearInterval(this.countDown);
   }
 
   setNewWord() {
     const word = this.getWord();
-
     this.renderWord(word);
+    this.countDown = setInterval(() => {
+      this.countTime();
+    }, 1000);
   }
 
   getWord() {
@@ -69,6 +82,7 @@ class Game {
         'javascript'
       ],
       index = Math.floor(Math.random() * words.length);
+    document.getElementById('timer').textContent = words[index].length;
 
     return words[index];
   }
@@ -77,14 +91,22 @@ class Game {
     const html = [...word]
       .map(
         (s, i) =>
-          `<span class="symbol ${i === 0 ? 'symbol_current': ''}">${s}</span>`
+        `<span class="symbol ${i === 0 ? 'symbol_current': ''}">${s}</span>`
       )
       .join('');
     this.wordElement.innerHTML = html;
 
     this.currentSymbol = this.wordElement.querySelector('.symbol_current');
   }
+
+  countTime() {
+    let timer = document.getElementById('timer');
+    timer.textContent--;
+    let time = Number(timer.innerHTML);
+    if (time === 0) {
+      this.fail();
+    }
+  }
 }
 
 new Game(document.getElementById('game'))
-
