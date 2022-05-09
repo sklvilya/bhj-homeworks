@@ -5,43 +5,32 @@ class Game {
     this.winsElement = container.querySelector('.status__wins');
     this.lossElement = container.querySelector('.status__loss');
     this.countDown;
-
     this.reset();
     this.registerEvents();
+    this.setNewWord();
   }
 
   reset() {
-    this.setNewWord();
     this.winsElement.textContent = 0;
     this.lossElement.textContent = 0;
   }
 
   registerEvents() {
-    /*
-      TODO:
-      Написать обработчик события, который откликается
-      на каждый введённый символ.
-      В случае правильного ввода слова вызываем this.success()
-      При неправильном вводе символа - this.fail();
-     */
-    let inputedSymbol;
     let current = this;
-
     function setEnteredSymbol(event) {
       let symbol = current.currentSymbol.textContent.toUpperCase();
-      inputedSymbol = String.fromCharCode(event.keyCode);
+      let inputedSymbol = String.fromCharCode(event.keyCode);
       symbol == inputedSymbol ? current.success() : current.fail();
     }
     document.addEventListener('keydown', setEnteredSymbol);
   }
 
-  success() {
+   success() {
     this.currentSymbol.classList.add('symbol_correct');
     this.currentSymbol = this.currentSymbol.nextElementSibling;
     if (this.currentSymbol !== null) {
       return;
     }
-
     if (++this.winsElement.textContent === 10) {
       alert('Победа!');
       this.reset();
@@ -62,9 +51,7 @@ class Game {
   setNewWord() {
     const word = this.getWord();
     this.renderWord(word);
-    this.countDown = setInterval(() => {
-      this.countTime();
-    }, 1000);
+    this.countDown = setInterval(()=>{this.countTime();}, 1000);
   }
 
   getWord() {
@@ -83,7 +70,6 @@ class Game {
       ],
       index = Math.floor(Math.random() * words.length);
     document.getElementById('timer').textContent = words[index].length;
-
     return words[index];
   }
 
