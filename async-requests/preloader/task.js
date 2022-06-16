@@ -1,34 +1,30 @@
-let valute;
-let valuteContanier = document.getElementById('items');
-let loader = document.getElementById('loader');
+let valute = document.getElementById('items');
+const xhr = new XMLHttpRequest();
 
-let xhr = new XMLHttpRequest();
 xhr.open('GET', 'https://netology-slow-rest.herokuapp.com');
-xhr.responseType = 'json';
 xhr.send();
 
-xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-        valute = xhr.response.response.Valute
-        console.log(valute);
-        console.log(typeof (valute));
+xhr.addEventListener("load", () => {
+	if (xhr.readyState === 4 && xhr.status == 200) {
+		loader.classList.remove("loader_active");
 
-        loader.classList.toggle('loader_active');
+		const valutes = JSON.parse(xhr.responseText).response.Valute;
+		console.log(valutes);
 
-        for (let valueItem in valute) {
-            valuteContanier.insertAdjacentHTML('afterbegin', `<div class="item">
-            <div class="item__code">
-                ${valute[valueItem].CharCode}
-            </div>
-            <div class="item__value">
-                ${valute[valueItem].Value}
-            </div>
-            <div class="item__currency">
-                руб.
-            </div>
-            </div>
-            `);
-        }
+		for (valute in valutes) {
+			const item = document.createElement("div");
+			item.classList.add("item");
+			item.innerHTML = `<div class="item__code">
+            ${valutes[valute].CharCode}
+        </div>
+        <div class="item__value">
+            ${valutes[valute].Value}
+        </div>
+        <div class="item__currency">
+            руб.
+        </div>`;
+			items.appendChild(item);
+		}
+	}
+});
 
-    }
-}
